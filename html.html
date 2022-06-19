@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Aufgabe Teilen</title>  
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+    ul {
+    margin: 0;
+    padding: 0 ;
+    list-style: none;
+    }
+    .Border{
+    border: black 1px solid;
+    }
+    .all{
+    display: flex;
+    align-items: center;
+    }
+    .EingabeVorlegen li {
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.4s;
+    padding: 5px;
+    }
+    .EingabeVorlegen li:nth-child(odd) {
+    background-color: #eeeeee;
+    }
+    .EingabeVorlegen li:hover {
+    padding-left: 20px;
+    }
+
+   
+
+    .hideIt{
+    display: none;
+    }
+    .upperdiv{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+    }
+    .logo img{
+    width: 150px;
+
+    }
+    label{
+        font-style: italic;
+        font-weight: bold;
+    }
+    .card-header{
+        font-weight: bold;
+        text-align: center;
+    }   
+    .hintsShow{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: black;
+    height: fit-content;
+    padding: 30px;
+    width: 50%;
+    background-color: white;
+    z-index: 9999;
+    display: none;
+    text-align: center;
+    }
+    .overlay{
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.886);
+    z-index: 5;
+    }
+    .hintMsg i{
+        position: relative;
+        top: 3px;
+        right: 5px;
+    }
+    .hintMsg h6{
+       font-style: italic;
+    }
+    #ScreenMitarbeiterfinale li{
+        text-align: right;
+        padding-right: 10px;
+    }
+    #ScreenAufgabefinale li{
+      
+        padding-left: 10px;
+    }
+    .result{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        grid-gap: 20px;   
+        padding: 10px; 
+        justify-content: center;
+    }
+    .MyCard{
+        min-width: 20%;
+    }
+    #lastscreen{
+        padding: 20px;
+        margin-bottom: 20px;
+
+    }
+
+    </style>
+</head>
+<body> 
+    <div id="overlay" class="overlay"></div>
+    <div class="upperdiv">
+        <div  class="hints">
+            <button id="hintsbutton" type="button" class="btn btn-info" >Bedienung</button>
+        </div>
+        <div class="logo">
+          <a target="_blanck" href="https://www.softwareag.com/en_corporate.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAYCAMAAAD3RZI3AAAA/FBMVEX///8AAC8AACgBHz0ABjGYmqEAACsAACYAAC3R09cAAB0VK0YAACOUmKEAIUBMU2UAACAAGDnf4eQAAAB3f4s4Q1mytLoAABgADjQAEzb29/jGyMxIrcGETO9/VOt8WuktOVCprLMAABDr7O69wMUiMEpdZHOCh5FzaOJmfNhhhNRakc5VmMtNpcRVXGxEs75tdIHSuvvPvvi0r9KKN/V9QO6vnPOgZ/eBYOm5lfi8sfLk1v2tpO2VX/N3Yuamq+jb3/Xz7v5ubt9lcNpac9ZRedGDotq1y+ZaiNF8s9NMncaj0NySzdXDze3N6upvpdFbwMIntbbP4eyq39wO+ElgAAADaklEQVRIicWWeXvcNBCHR7Is+cyutfEl08Re+SjX4paEoy2BQlruAun3/y6MZO9uniUl9EmeMH9Y8vgnvdLM2DKANT3UobUUHtL8ZeFYSx6WmyTO/8GtcjabVz8U88mTp08/d3fW3DrAz7LMvzv37Oz8/Iv30Ls5p7kLuqruxv3y/NHJV++hD5MurRuo1it1J+7XyD159t/1R8Q1TcXF3bjPzx6dnJ6+uOkRZlLuuzanUh8Vg5ZSZoT7UoKUGr1KSrMI9NslZa2CyYPCSYA+Pc0krRsv3yD34uLxt98dUHUXUb5cmOFtITgXSQV6JRynEGjEcahYKSdf4PPjPD/GZpOXmH9BuRDNeuWDH6Ew6AHiqWPXtqpg6HuM2ctz5D7+/ofLV69/vB66o5KkoUc6gCYoaRfSJG/VmjtOydHwO+PxtYpZACbnToiNxwZElLzuKHGoD5uypHTZw0i9elxQhlPBkC0gnTb88vTEcD/86KePP/lZ74IccYxsE/qgl0mNOtklQik4YjEopVqParzzBa9ARo4TSfCp8FFrIuSXhrsgo9JaVUsSmwkJx4Zvctkpl1jGs4uLmfvLp7/OXBkU47SImES2IyOvMXUV2yTOdVXiHhvaj7SBmDFw2eTGZRmuiT6MRY14rY6LDrIBsrit0+1L+PzF5eUry/3gt9m1oUyUCyT1bDF5QmQcckdWo7LJ6AZqNu60Ktpz6yQJjLEkuql69e+vLfezN7PDxcJiYrPnpjjxIbflQrOl1AHTnLeo3Uzaa1zzxk9W38Q16D8M98/dvfL7MpAx4/MeMLWHXEXLscCiCguUKhiYN1UH3XM3rH8Hb2+G+9c0oUswq1pQXy6L0Xj6cimvc6cRWLQFhn8oymRhD1TLSpM9t6G0Ne0o/8nb2pXh2kC3q6QY4i7BTYyc1cMQFgLn33FFkqYdrrAhDpY0VNQh5kzpCUmHISHOngt1QXt3CNnqX8CG+9b24pxw7q0zMN8FD7u5wQIJLFcxzunaRGTlBSZAgbe2Vb9ZepwGY7T2IQ3GKUFpxCn1cveAJePdMRhfXb15OxeWjsfR1bNi190egqrNskZZh40i3k7D/GEcfGgaja7t61IN43Gz+zRs7dqx3707EvdvFZ//chxx+7F/n1w6/1yJ2wv+XrnF9A/btw/H/BsN21XqCezmYAAAAABJRU5ErkJggg==" alt="Software AG" srcset=""></a>  
+        </div>   
+    </div>
+    <div id="hintsBlock" class="hintsShow">
+        <h1 class="mb-3">Die Hints Sind Folgenden :</h1>
+        <div class="hintMsg d-flex mb-3">
+            <i class="fas fa-arrow-right "></i>    
+            <h6>Enter Drücken, um neue Aufgabe sowie Mitarbeiter hinzuzufügen</h6>
+        </div>
+        <div class="hintMsg d-flex mb-3">
+            <i class="fas fa-arrow-right "></i>    
+            <h6>Um zu löschen, Zwei mal auf eine Mitarbeiter oder Aufgabe Klicken</h6>
+        </div>
+        <div class="hintMsg d-flex mb-3">
+            <i class="fas fa-arrow-right "></i>    
+            <h6>Um Letzte Änderungen zu Speichern, mal auf Mischen Klick</h6>
+        </div>
+    </div>
+    <div class="container mainPage">
+        <div class="container mt-3 p-3 Border">
+            <div class="row justify-content-between">
+              <div class="col-md-6 col-lg-4">
+                <div class="form-group">
+                    <label for="neuermitarbeiter">Neue Mitarbeiter hinzufügen</label>
+                    <i class="fas fa-user-friends" style="margin-left: 5px;"></i>
+                    <input type="text" class="mt-2 form-control" id="neuermitarbeiter" placeholder="Name des Kollegen ...">
+                </div>
+                <div class="schrift mt-3">
+                    <h6>Keine hinzugefügten Mitarbeiter</h6>
+                </div>
+                <ul id="ScreenMitarbeiter" class="EingabeVorlegen "></ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <div class="form-group">
+                    <label for="neueAufgabe">Neue Aufgabe hinzufügen</label>
+                    <i class="fas fa-briefcase " style="margin-left: 5px;"></i>
+                    <input type="text" class=" mt-2 form-control" id="neueAufgabe" placeholder="Neue Aufgabe">
+                </div>
+                <div class="schrift mt-3">
+                    <h6>Keine hinzugefügten Aufgaben</h6>
+                </div>
+                <ul id="ScreenAufgabe" class="EingabeVorlegen "></ul>
+              </div>
+            </div>
+        </div>
+        <div class="container text-center ">
+            <button id="Mischen" type="button" class="btn btn-warning mt-4  ">Mischen</button>
+            <button id="ClearAll" type="button" class="btn btn-danger mt-4  ">Sauber Machen</button>
+        </div>
+        <div id="lastscreen" class="hideIt  container mt-4  Border">
+            <h1 class="text-center mb-4">Dieses App hat Folgendes entschieden !</h1>
+            <div class="row">
+                <div id="ScreenOfResult" class="d-flex result"></div>
+              </div>
+            </div>
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/a4e372b1f4.js" crossorigin="anonymous"></script><script>
+
+const InputMitarbeiter = document.getElementById("neuermitarbeiter");
+const InputAufgabe = document.getElementById("neueAufgabe");
+const ScreenAufgabe = document.getElementById("ScreenAufgabe");
+const ScreenMitarbeiter = document.getElementById("ScreenMitarbeiter");
+const ScreenAufgabefinale = document.getElementById("ScreenAufgabefinale");
+const ScreenMitarbeiterfinale = document.getElementById("ScreenMitarbeiterfinale");
+const EingabeVorlegen = document.getElementsByClassName("EingabeVorlegen");
+const schriften = document.getElementsByClassName("schrift");
+const ListOfInputeds = document.getElementsByClassName("ListOfInputed");
+const MischenButton = document.getElementById("Mischen");
+const ClearButton = document.getElementById("ClearAll");
+const Hintsbutton = document.getElementById("hintsbutton");
+const overlay = document.getElementById("overlay");
+const HintsBlock = document.getElementById("hintsBlock");
+const DivOfScreen =  document.getElementById("ScreenOfResult");
+
+
+//set and get In the Locale Storeg
+SetTheStoredInTheLocalStoreg('Workers',ScreenMitarbeiter);
+SetTheStoredInTheLocalStoreg('Tasks',ScreenAufgabe);
+
+//check if is allready user or tasks exist
+if(EingabeVorlegen[0].children.length>0){schriften[0].children[0].textContent = "Alle von Ihnen gegebenen Mitarbeiter";}
+if(EingabeVorlegen[1].children.length>0){schriften[1].children[0].textContent = "Alle von Ihnen gegebenen Aufgaben";} 
+
+function GetValueFromHtmlCollection(Lists){
+    let AllNames = [];
+    Array.from(Lists.children).forEach(List => {
+        AllNames.push(List.innerText);  
+    });
+    return AllNames;
+}
+
+function SetTheStoredInTheLocalStoreg(StoredVaribale,screen){
+    if(localStorage.getItem(StoredVaribale)){
+        Array.from(JSON.parse(localStorage.getItem(StoredVaribale))).forEach(name=>{
+                // Create a class attribute:
+                const att = document.createAttribute("class");
+                // Set the value of the class attribute:
+                att.value = "ListOfInputed";
+                let list = document.createElement("li");
+                // Add the class attribute to the li:
+                list.setAttributeNode(att);   
+                const newContent = name ;
+                list.innerText = newContent ;
+                screen.appendChild(list);
+                //add an Event Listner to the mew list
+                list.addEventListener('dblclick', function (e) {
+                    let test = confirm("Bestätigung der Löchung von =>  "+this.textContent);
+                    test && screen.removeChild(this);
+                    if(EingabeVorlegen[0].children.length == 0){schriften[0].children[0].textContent = "Keine hinzugefügten Aufgaben";}
+                    if(EingabeVorlegen[0].children.length<2){document.getElementById('lastscreen').style.display = 'none';}
+                })
+        })
+    }
+
+}
+
+function SchowResult () {
+    let AufgabeArray = shuffle([...ScreenAufgabe.children]);
+    let MitarbeiterArray = shuffle([...ScreenMitarbeiter.children]);
+    if(MitarbeiterArray.length > 1 && AufgabeArray.length > 0 ){       
+        document.getElementById('lastscreen').style.display = 'block';
+        //Clear all the List to Avoid deplicate entry
+        DivOfScreen.innerHTML = "" ;
+        for (let index = 0; index < MitarbeiterArray.length; index++) {
+                //Createparent
+                // Create a class attribute:
+                const classParent = document.createAttribute("class");
+                // Set the value of the class attribute: 
+                classParent.value = "card MyCard";
+                // Create a style attribute:
+                const styleParent = document.createAttribute("style");
+                // Set the value of the style attribute: 
+                styleParent.value = "width: 18rem;";
+                // create div node
+                const divParent = document.createElement("div");
+                // Add the class attribute to the divParent:
+                divParent.setAttributeNode(classParent);
+                // Add the style attribute to the divParent:
+                divParent.setAttributeNode(styleParent);
+
+
+                //CreateChild
+
+                //Create Text Node For the Name
+                const name = document.createTextNode(MitarbeiterArray[index].textContent);
+                // Create a class attribute:
+                const classchild = document.createAttribute("class");
+                // Set the value of the class attribute: 
+                classchild.value = "card-header";
+                // create div node
+                const divchild = document.createElement("div");
+                // Add the class attribute to the divParent:
+                divchild.setAttributeNode(classchild);
+                //append the text node to the div
+                divchild.appendChild(name);
+                //append the child  to the parent
+                divParent.appendChild(divchild);
+
+                //create the Ul 
+
+                // Create a class attribute:
+                const ulClass = document.createAttribute("class");
+                // Set the value of the class attribute: 
+                ulClass.value = "list-group list-group-flush ulListOfName";
+                // create ul node
+                const ul = document.createElement("ul");
+                // Add the class attribute to the ul:
+                ul.setAttributeNode(ulClass);
+                //append the ul  to the parent
+                divParent.appendChild(ul);   
+
+                //last Step
+                DivOfScreen.appendChild(divParent)
+
+            
+        }// end of showing the Names
+
+        if(AufgabeArray.length >= MitarbeiterArray.length ){
+            var counterName = 0 ;
+            for (let index = 0; index < AufgabeArray.length; index++) {
+                if (counterName === (MitarbeiterArray.length) ) { counterName = 0 }
+                //create the li 
+                //Create Text Node For the Name
+                const task = document.createTextNode(AufgabeArray[index].textContent);
+                // Create a class attribute:
+                const liClass = document.createAttribute("class");
+                // Set the value of the class attribute: 
+                liClass.value = "list-group-item";
+                // create li node
+                const li = document.createElement("li");
+                // Add the class attribute to the ul:
+                li.setAttributeNode(liClass);
+                //append the text node to the li
+                li.appendChild(task);
+                //append the li  to the ul
+                document.getElementsByClassName("ulListOfName")[counterName].appendChild(li)
+                counterName++ ;   
+            }
+        }else{
+            var counterAufgabe = 0 ;
+            for (let index = 0; index < MitarbeiterArray.length; index++) {
+                if (counterAufgabe === (AufgabeArray.length) ) { counterAufgabe = 0 }
+                //create the li 
+                //Create Text Node For the Name
+                const task = document.createTextNode(AufgabeArray[counterAufgabe].textContent);
+                // Create a class attribute:
+                const liClass = document.createAttribute("class");
+                // Set the value of the class attribute: 
+                liClass.value = "list-group-item";
+                // create li node
+                const li = document.createElement("li");
+                // Add the class attribute to the ul:
+                li.setAttributeNode(liClass);
+                //append the text node to the li
+                li.appendChild(task);
+                //append the li  to the ul
+                document.getElementsByClassName("ulListOfName")[index].appendChild(li)
+                counterAufgabe++ ;   
+            }
+        }
+    }else{alert("Es muss mehr als zwei Mitarbeiter sowie Aufgaben eingegeben worden sein")}
+            
+}
+
+function shuffle(array) {
+    let counter = array.length;
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        let index = Math.floor(Math.random() * counter);
+        // Decrease counter by 1
+        counter--;
+        // And swap the last element with it
+        let temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+    return array;
+}
+
+//All Events
+overlay.addEventListener("click",function(){
+    overlay.style.display = "none"; 
+    HintsBlock.style.display = "none"; 
+})
+
+Hintsbutton.addEventListener("click",function(){
+    overlay.style.display = "block"; 
+    HintsBlock.style.display = "block"; 
+})
+
+InputMitarbeiter.addEventListener("keydown",function(){
+    //if enter is Pressed add new Item to list 
+    if (event.keyCode === 13) {
+        if(this.value.length !== 0){
+            // Create a class attribute:
+            const att = document.createAttribute("class");
+            // Set the value of the class attribute:
+            att.value = "ListOfInputed";
+            const list = document.createElement("li");
+            // Add the class attribute to the li:
+            list.setAttributeNode(att);   
+            const newContent = document.createTextNode(this.value);
+            list.appendChild(newContent);
+            ScreenMitarbeiter.appendChild(list);
+            //add an Event Listner to the mew list
+                list.addEventListener('dblclick', function (e) {
+                    let test = confirm("Bestätigung der Löchung von =>  "+this.textContent);
+                    test && ScreenMitarbeiter.removeChild(this);
+                    if(EingabeVorlegen[0].children.length == 0){schriften[0].children[0].textContent = "Keine hinzugefügten Aufgaben";}
+                    if(EingabeVorlegen[0].children.length<2){document.getElementById('lastscreen').style.display = 'none';}
+                })
+            //handel if there is somthing to be shown else write nothing 
+            if(EingabeVorlegen[0].children.length>0){schriften[0].children[0].textContent = "Alle von Ihnen gegebenen Mitarbeiter";}
+            this.value= "";           
+        }
+    }
+})
+
+InputAufgabe.addEventListener("keydown",function(){
+    //if enter is Pressed add new Item to list 
+    if (event.keyCode === 13) {
+        if(this.value.length !== 0){
+            // Create a class attribute:
+            const att = document.createAttribute("class");
+            // Set the value of the class attribute:
+            att.value = "ListOfInputed";
+            const list = document.createElement("li");
+            // Add the class attribute to the li:
+            list.setAttributeNode(att);
+            const newContent = document.createTextNode(this.value);
+            list.appendChild(newContent);
+            ScreenAufgabe.appendChild(list);
+            //add an Event Listner to the mew list
+            list.addEventListener('dblclick', function (e) {
+                let test = confirm("Bestätigung der Löchung von =>  "+this.textContent);
+                test && ScreenAufgabe.removeChild(this);  
+                if(EingabeVorlegen[1].children.length == 0){schriften[1].children[0].textContent = "Keine hinzugefügten Aufgaben";}
+                if(EingabeVorlegen[1].children.length<2){document.getElementById('lastscreen').style.display = 'none';} 
+            })
+            //handel if there is somthing to be shown else write nothing 
+            if(EingabeVorlegen[1].children.length>0){schriften[1].children[0].textContent = "Alle von Ihnen gegebenen Aufgaben";}
+            this.value= "";
+        }
+    }
+})
+
+MischenButton.addEventListener("click",function(e){
+    SchowResult ();
+    localStorage.setItem('Workers',JSON.stringify(GetValueFromHtmlCollection(ScreenMitarbeiter)));
+    localStorage.setItem('Tasks',JSON.stringify(GetValueFromHtmlCollection(ScreenAufgabe)));
+})
+
+ClearButton.addEventListener("click",function(e){
+   localStorage.clear();
+   location.reload();
+})
+
+</script>
+</body>
+</html>
